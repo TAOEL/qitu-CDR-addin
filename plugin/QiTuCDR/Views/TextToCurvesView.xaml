@@ -139,7 +139,7 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </Border>
-                            <TextBlock Text="智能批量转曲"
+                            <TextBlock Text="智能转曲"
                                        Foreground="#333333"
                                        FontFamily="Microsoft YaHei UI"
                                        FontSize="13"
@@ -264,9 +264,9 @@
                                         <Setter Property="FontSize" Value="13" />
                                     </Style>
                                 </ComboBox.Resources>
-                                <ComboBoxItem Content="仅选择对象" />
-                                <ComboBoxItem Content="当前页面全部内容" />
-                                <ComboBoxItem Content="整个文档所有页面" />
+                                <ComboBoxItem Content="仅选中" />
+                                <ComboBoxItem Content="当前页面" />
+                                <ComboBoxItem Content="整个文档" />
                             </ComboBox>
                         </Grid>
 
@@ -394,7 +394,7 @@
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Button.Template>
-                                <TextBlock Text="一键批量转曲"
+                                <TextBlock Text="一键转曲"
                                            FontFamily="Microsoft YaHei UI"
                                            FontSize="13"
                                            Foreground="#ffffff" />
