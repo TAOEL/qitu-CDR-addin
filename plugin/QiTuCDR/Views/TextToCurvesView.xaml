@@ -113,7 +113,7 @@
             <Grid ClipToBounds="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition x:Name="ContentRow" Height="*" />
+                    <RowDefinition x:Name="ContentRow" Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Border x:Name="TitleBar"

@@ -72,7 +72,7 @@ namespace QiTuCDR.Utils
             {
                 Title = "文字转曲 — 企图插件",
                 Width = 420,
-                Height = 480,
+                SizeToContent = SizeToContent.Height,
                 MinWidth = 360,
                 MinHeight = 0,
                 WindowStyle = WindowStyle.None,
