@@ -289,9 +289,9 @@ namespace QiTuCDR.ViewModels
             int c = 0, f = 0; bool grouped = false;
             try
             {
-                var app = GetApp(); if (app == null) { Show(false, "CDR未连接"); return; }
+                var app = GetApp(); if (app == null) { ToastHelper.ShowDirect("请打开文档", shake: true); Show(false, "CDR未连接"); return; }
                 var doc = ComGet(app, "ActiveDocument");
-                if (doc == null) { Show(false, "无活动文档"); return; }
+                if (doc == null) { ToastHelper.ShowDirect("请打开文档", shake: true); Show(false, "无活动文档"); return; }
 
                 object shapesObj = GetTargetShapes(app, doc);
                 if (shapesObj == null) { Show(false, "无有效对象"); return; }
@@ -301,8 +301,12 @@ namespace QiTuCDR.ViewModels
                 ComEndGroup(doc); grouped = false;
 
                 ConvertedCount = c; FailedCount = f;
-                if (c > 0 && f == 0)      Show(true, $"成功转曲 {c} 个对象");
-                else if (c > 0 && f > 0) Show(true, $"转曲完成：成功{c} 失败{f}");
+                if (c > 0)
+                {
+                    ToastHelper.ShowDirect("转曲成功");
+                    if (f == 0)      Show(true, $"成功转曲 {c} 个对象");
+                    else             Show(true, $"转曲完成：成功{c} 失败{f}");
+                }
                 else if (f > 0)          Show(false, $"转曲失败：{f} 个对象");
                 else                     Show(false, "未找到可转曲对象");
 
