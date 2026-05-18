@@ -289,9 +289,9 @@ namespace QiTuCDR.ViewModels
             int c = 0, f = 0; bool grouped = false;
             try
             {
-                var app = GetApp(); if (app == null) { ToastHelper.ShowDirect("请打开文档", shake: true); Show(false, "CDR未连接"); return; }
+                var app = GetApp(); if (app == null) { ToastHelper.ShowDirect("无活动文档", shake: true); Show(false, "CDR未连接"); return; }
                 var doc = ComGet(app, "ActiveDocument");
-                if (doc == null) { ToastHelper.ShowDirect("请打开文档", shake: true); Show(false, "无活动文档"); return; }
+                if (doc == null) { ToastHelper.ShowDirect("无活动文档", shake: true); Show(false, "无活动文档"); return; }
 
                 object shapesObj = GetTargetShapes(app, doc);
                 if (shapesObj == null) { Show(false, "无有效对象"); return; }
