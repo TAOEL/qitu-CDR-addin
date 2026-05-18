@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>QiTuCDR</RootNamespace>
+    <AssemblyName>QiTuCDR</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <LangVersion>7.3</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <!-- ======================================================== -->
+  <!-- 恢复第三方 qiuku 插件到原始状态（仅需执行一次）              -->
+  <!-- 执行方式：MSBuild /t:RestoreQiukuAddon                     -->
+  <!-- ======================================================== -->
+  <Target Name="RestoreQiukuAddon">
+    <PropertyGroup>
+      <QiukuDir>C:\Program Files\Corel\CorelDRAW Graphics Suite\26\Programs64\Addons\qiuku</QiukuDir>
+      <QiukuBackupDir>C:\Program Files\Corel\CorelDRAW Graphics Suite\26\Programs64\Addons\qiuku\backup_old</QiukuBackupDir>
+    </PropertyGroup>
+    <Message Importance="high" Text="[QiTuCDR] 正在恢复 qiuku 第三方插件到原始状态..." />
+    <Copy SourceFiles="$(QiukuBackupDir)\qiuku.dll" DestinationFolder="$(QiukuDir)" ContinueOnError="true" />
+    <Copy SourceFiles="$(QiukuBackupDir)\WpfAnimatedGif.dll" DestinationFolder="$(QiukuDir)" ContinueOnError="true" />
+    <Copy SourceFiles="$(QiukuBackupDir)\Newtonsoft.Json.dll" DestinationFolder="$(QiukuDir)" ContinueOnError="true" />
+    <Delete Files="$(QiukuDir)\QiTuCDR.dll" ContinueOnError="true" />
+    <Delete Files="$(QiukuDir)\QiTuCDR.pdb" ContinueOnError="true" />
+    <Delete Files="$(QiukuDir)\Microsoft.Xaml.Behaviors.dll" ContinueOnError="true" />
+    <Message Importance="high" Text="[QiTuCDR] qiuku 插件已恢复原始状态。" />
+  </Target>
+
+  <!-- ======================================================== -->
+  <!-- 编译后自动部署到 CDR V26 + V27 Addons\QiTuCDR 独立目录     -->
+  <!-- ⚠️ 绝不触及其他 Addon 目录（如 qiuku）                     -->
+  <!-- ======================================================== -->
+  <Target Name="DeployToCdrAddons" AfterTargets="Build">
+    <PropertyGroup>
+      <CdrV26Dir>C:\Program Files\Corel\CorelDRAW Graphics Suite\26\Programs64\Addons\QiTuCDR</CdrV26Dir>
+      <CdrV27Dir>C:\Program Files\Corel\CorelDRAW Graphics Suite\27\Programs64\Addons\QiTuCDR</CdrV27Dir>
+    </PropertyGroup>
+    <Message Importance="high" Text="[QiTuCDR] 部署到 CDR V26 和 V27 Addons..." />
+    <MakeDir Directories="$(CdrV26Dir)" />
+    <MakeDir Directories="$(CdrV27Dir)" />
+    <!-- V26 部署 -->
+    <Copy SourceFiles="$(OutputPath)QiTuCDR.dll" DestinationFolder="$(CdrV26Dir)" />
+    <Copy SourceFiles="$(OutputPath)QiTuCDR.pdb" DestinationFolder="$(CdrV26Dir)" />
+    <Copy SourceFiles="$(OutputPath)Newtonsoft.Json.dll" DestinationFolder="$(CdrV26Dir)" />
+    <Copy SourceFiles="$(OutputPath)Microsoft.Xaml.Behaviors.dll" DestinationFolder="$(CdrV26Dir)" />
+    <Copy SourceFiles="Deploy\CorelDrw.addon" DestinationFolder="$(CdrV26Dir)" />
+    <Copy SourceFiles="Deploy\AppUI.xslt" DestinationFolder="$(CdrV26Dir)" />
+    <Copy SourceFiles="Deploy\UserUI.xslt" DestinationFolder="$(CdrV26Dir)" />
+    <!-- V27 部署（允许失败，V27 进程运行时文件锁定属正常） -->
+    <Copy SourceFiles="$(OutputPath)QiTuCDR.dll" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Copy SourceFiles="$(OutputPath)QiTuCDR.pdb" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Copy SourceFiles="$(OutputPath)Newtonsoft.Json.dll" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Copy SourceFiles="$(OutputPath)Microsoft.Xaml.Behaviors.dll" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Copy SourceFiles="Deploy\CorelDrw.addon" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Copy SourceFiles="Deploy\AppUI.xslt" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Copy SourceFiles="Deploy\UserUI.xslt" DestinationFolder="$(CdrV27Dir)" ContinueOnError="true" />
+    <Message Importance="high" Text="[QiTuCDR] 部署完成！V26 + V27。" />
+  </Target>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <!-- CorelDRAW V26 互操作程序集引用 -->
+  <ItemGroup>
+    <Reference Include="Corel.Interop.VGCore">
+      <HintPath>C:\Program Files\Corel\CorelDRAW Graphics Suite\26\Programs64\Assemblies\Corel.Interop.VGCore.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Corel.Interop.CorelDRAW">
+      <HintPath>C:\Program Files\Corel\CorelDRAW Graphics Suite\26\Programs64\Assemblies\Corel.Interop.CorelDRAW.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="obj\**;bin\**" />
+    <Page Include="**\*.xaml" Exclude="obj\**;bin\**" />
+    <Resource Include="Resources\**\*" Exclude="Resources\**\*.xaml" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CDR批量转曲｜极简专业版</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Microsoft YaHei}
+body{background:#2b2b2b;height:100vh;display:flex;align-items:center;justify-content:center}
+
+/* 主窗口：高度340px */
+.cdr-plugin{
+  width:620px;height:340px;background:#fff;
+  border:1px solid #c9c9c9;border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;user-select:none
+}
+
+/* 主标题栏：与设置标题栏完全一模一样，禁止挤压 */
+.plugin-titlebar{
+  height:32px;background:#f2f2f2;display:flex;align-items:center;padding:0 10px;
+  border-bottom:1px solid #ddd;font-size:13px;color:#333; /* 主标题：13px */
+  flex-shrink:0;cursor:move;gap:8px
+}
+/* 标题+版本号 */
+.title-wrap{
+  display:flex;align-items:center;gap:6px;flex:1
+}
+/* 版本号：8px，背景适配 */
+.version{
+  font-size:8px;color:#333;cursor:pointer;user-select:none;
+  background:#dddddd;padding:1px 3px;border-radius:2px;line-height:1;
+}
+/* 品牌图标：16×16，圆角2px */
+.plugin-icon{
+  width:16px;height:16px;background:#333;color:#fff;font-size:12px;
+  display:grid;place-items:center;border-radius:2px;
+}
+/* 按钮固定右侧 */
+.plugin-buttons{display:flex;gap:8px;align-items:center}
+
+/* 标题栏按钮：16×16，圆角2px，overflow彻底裁剪浏览器默认溢出 */
+.plugin-btn{
+  width:16px;height:16px;display:grid;place-items:center;
+  font-size:12px;color:#333;background:transparent;border:none;cursor:pointer;
+  border-radius:2px;
+  overflow:hidden;
+}
+.plugin-btn:hover{background:#e5e5e5}
+.plugin-btn.close:hover{background:#e81123;color:#fff}
+
+/* 通用弹窗样式 */
+.modal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.25);display:none;align-items:center;justify-content:center;
+  z-index:9999
+}
+.modal-window{
+  width:300px;height:260px;background:#fff;border:1px solid #c9c9c9;border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);display:flex;flex-direction:column;overflow:hidden
+}
+.modal-titlebar{
+  height:32px;background:#f2f2f2;display:flex;align-items:center;padding:0 10px;
+  border-bottom:1px solid #ddd;font-size:13px;color:#333;
+  flex-shrink:0
+}
+.modal-close{
+  width:16px;height:16px;margin-left:auto;background:transparent;border:none;
+  display:grid;place-items:center;font-size:12px;color:#333;cursor:pointer;
+  border-radius:2px;
+  overflow:hidden;
+}
+.modal-close:hover{background:#e81123;color:#fff}
+.modal-content{
+  flex:1;padding:20px;background:#f8f9fa;display:flex;flex-direction:column;gap:14px
+}
+.modal-item{
+  display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#444
+}
+/* 版本弹窗内容 */
+.version-content{
+  flex:1;padding:16px;background:#f8f9fa;display:flex;flex-direction:column;gap:0;font-size:13px;color:#444;
+  overflow-y:auto
+}
+.version-item{
+  display:flex;justify-content:space-between;font-weight:500;padding:6px 0
+}
+/* 虚线分割线，加大上下间距、居中 */
+.version-item:not(:first-child){
+  border-top:1px dashed #cccccc;
+  margin-top:14px;
+  padding-top:14px;
+}
+.version-desc{
+  margin:4px 0 0 0;line-height:1.4;font-size:12px;color:#555;padding-left:4px
+}
+
+/* 复选框全局统一：圆角2px */
+input[type="checkbox"]{
+  border-radius:2px;
+  accent-color:#2196F3;
+  width:14px;height:14px;
+  margin:0 4px 0 0;
+}
+
+/* 内容区 */
+.plugin-content{
+  flex:1;padding:20px;background:#f8f9fa;display:flex;flex-direction:column;gap:14px
+}
+.form-row{display:flex;align-items:center;gap:10px}
+.form-row label{width:100px;font-size:13px;color:#444}
+.form-row select{flex:1;padding:6px 8px;border:1px solid #ddd;border-radius:4px;font-size:13px;background:#f2f2f2}
+.check-row{display:flex;align-items:center;gap:24px;padding-left:0}
+.check-row .label{width:100px;font-size:13px;color:#444}
+.check-row label{font-size:13px;color:#444;cursor:pointer;display:flex;align-items:center}
+
+/* 智能检测面板 */
+.detect-box{
+  background:#fff;border:1px solid #e2e2e2;border-radius:6px;padding:10px;
+  font-size:13px;color:#444
+}
+.detect-title{font-weight:600;margin-bottom:6px;color:#333}
+.detect-item{display:flex;justify-content:space-between;padding:2px 0}
+.warn{color:#f57c00}
+
+/* 底部按钮 */
+.btn-group{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.btn{padding:7px 18px;border-radius:6px;font-size:13px;border:none;cursor:pointer}
+.btn-primary{background:#2196F3;color:#fff}
+.btn-default{background:#eee;color:#333}
+</style>
+</head>
+<body>
+<div class="cdr-plugin" id="win">
+  <div class="plugin-titlebar" id="bar">
+    <div class="plugin-icon">C</div>
+    <div class="title-wrap">
+      <span>智能批量转曲</span>
+      <span class="version" id="verBtn">1.0.0.0</span>
+    </div>
+    <!-- 按钮固定在最右侧 -->
+    <div class="plugin-buttons">
+      <div class="plugin-btn" id="pin" title="置顶">○</div>
+      <div class="plugin-btn" id="settingBtn" title="更多设置">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="2.8"></circle>
+          <path d="M12 2v3m0 14v3M4 12H1m22 0h-3M6.34 6.34 4.93 4.93m14.14 14.14-1.41-1.41M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+      </div>
+      <div class="plugin-btn" id="fold" title="最小化">─</div>
+      <div class="plugin-btn close" id="close" title="关闭">×</div>
+    </div>
+  </div>
+
+  <div class="plugin-content">
+    <div class="form-row">
+      <label>处理范围：</label>
+      <select id="scope">
+        <option>仅选择对象</option>
+        <option selected>当前页面全部内容</option>
+        <option>整个文档所有页面</option>
+      </select>
+    </div>
+
+    <div class="check-row">
+      <span class="label">对象类型：</span>
+      <label><input type="checkbox" checked> 文本</label>
+      <label><input type="checkbox" checked> 轮廓</label>
+      <label><input type="checkbox" checked> 图形</label>
+    </div>
+
+    <div class="detect-box">
+      <div class="detect-title">智能检测结果</div>
+      <div class="detect-item"><span>文本对象：</span><span id="textCount">12 个</span></div>
+      <div class="detect-item"><span>轮廓对象：</span><span id="outlineCount">5 个</span></div>
+      <div class="detect-item"><span>图形对象：</span><span id="shapeCount" class="warn">8 个</span></div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" id="start">一键批量转曲</button>
+      <button class="btn btn-default" id="reset">重置</button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置弹窗 -->
+<div class="modal" id="settingModal">
+  <div class="modal-window">
+    <div class="modal-titlebar">
+      设置
+      <button class="modal-close" id="settingClose">×</button>
+    </div>
+    <div class="modal-content">
+      <div class="modal-item">
+        <span>窗口置顶</span>
+        <input type="checkbox" id="chkTop" checked>
+      </div>
+      <div class="modal-item">
+        <span>保存窗口位置</span>
+        <input type="checkbox" checked>
+      </div>
+      <div class="modal-item">
+        <span>保存配置参数</span>
+        <input type="checkbox" checked>
+      </div>
+      <div class="modal-item">
+        <span>自动备份原文件</span>
+        <input type="checkbox" checked>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 版本信息弹窗（多版本扩展） -->
+<div class="modal" id="versionModal">
+  <div class="modal-window">
+    <div class="modal-titlebar">
+      版本信息
+      <button class="modal-close" id="verClose">×</button>
+    </div>
+    <div class="version-content">
+      <div class="version-item">
+        <span>V1.0.0.0</span>
+        <span>2025‑05‑12</span>
+      </div>
+      <div class="version-desc">
+        • 全新发布，支持文本/轮廓/图形批量转曲<br>
+        • 智能统计页面对象数量<br>
+        • 支持仅选中对象、整页、全文档三种模式
+      </div>
+
+      <div class="version-item">
+        <span>V0.9.2.5</span>
+        <span>2025‑04‑28</span>
+      </div>
+      <div class="version-desc">
+        • 优化图形识别精度，修复路径漏转问题<br>
+        • 提升大文档运行速度<br>
+        • 新增基础配置持久化
+      </div>
+
+      <div class="version-item">
+        <span>V0.8.1.0</span>
+        <span>2025‑04‑15</span>
+      </div>
+      <div class="version-desc">
+        • 修复特殊字体转曲异常<br>
+        • 优化界面布局，统一圆角规范<br>
+        • 增加一键重置功能
+      </div>
+
+      <div class="version-item">
+        <span>V0.7.0.2</span>
+        <span>2025‑04‑01</span>
+      </div>
+      <div class="version-desc">
+        • 首次实现批量转曲核心功能<br>
+        • 完成基础UI框架搭建
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const win=document.getElementById('win'),bar=document.getElementById('bar');
+let drag=0,ox=0,oy=0;
+bar.onmousedown=e=>{drag=1;ox=e.clientX-win.offsetLeft;oy=e.clientY-win.offsetTop;win.style.zIndex=9999};
+document.onmousemove=e=>{if(!drag)return;win.style.left=(e.clientX-ox)+'px';win.style.top=(e.clientY-oy)+'px'};
+document.onmouseup=()=>drag=0;
+
+let pin=true;
+win.style.zIndex=9999;
+document.getElementById('pin').innerHTML="●";
+function togglePin(){
+  pin=!pin;win.style.zIndex=pin?9999:1;
+  document.getElementById('pin').innerHTML=pin?"●":"○";
+  document.getElementById('chkTop').checked=pin;
+}
+document.getElementById('pin').onclick=togglePin;
+document.getElementById('chkTop').onchange=togglePin;
+
+let fold=false;
+function toggleFold(){
+  fold=!fold;
+  win.style.height=fold?"32px":"340px";
+  document.querySelector('.plugin-content').style.display=fold?"none":"flex";
+  document.getElementById('fold').innerHTML=fold?"□":"─";
+}
+document.getElementById('fold').onclick=toggleFold;
+
+document.getElementById('close').onclick=()=>win.style.display='none';
+
+// 设置弹窗
+const settingBtn=document.getElementById('settingBtn');
+const settingModal=document.getElementById('settingModal');
+const settingClose=document.getElementById('settingClose');
+settingBtn.onclick=()=>settingModal.style.display='flex';
+settingClose.onclick=()=>settingModal.style.display='none';
+
+// 版本弹窗
+const verBtn=document.getElementById('verBtn');
+const versionModal=document.getElementById('versionModal');
+const verClose=document.getElementById('verClose');
+verBtn.onclick=()=>versionModal.style.display='flex';
+verClose.onclick=()=>versionModal.style.display='none';
+
+document.getElementById('start').onclick=()=>{
+  alert("✅ 批量转曲完成：已按所选对象类型执行，自动备份原文件");
+};
+
+document.getElementById('reset').onclick=()=>{
+  document.getElementById('scope').selectedIndex=1;
+  document.querySelectorAll('.check-row input').forEach(cb=>cb.checked=true);
+  document.getElementById('textCount').innerText="12 个";
+  document.getElementById('outlineCount').innerText="5 个";
+  document.getElementById('shapeCount').innerText="8 个";
+};
+</script>
+</body>
+</html>

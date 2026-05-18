@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1100">
+<title>QiTuCDR Design Preview v2 — 浅色柔和主题</title>
+<style>
+  :root {
+    --bg-primary: #F8F9FA;
+    --bg-secondary: #FFFFFF;
+    --bg-card-dark: #1A1A2E;
+    --bg-card-green: #E8F5E9;
+    --bg-card-blue: #E3F2FD;
+    --bg-card-orange: #FFF3E0;
+    --text-primary: #2D3436;
+    --text-secondary: #636E72;
+    --text-muted: #B2BEC3;
+    --text-white: #FFFFFF;
+    --accent-green: #81C784;
+    --accent-blue: #64B5F6;
+    --accent-orange: #FFB74D;
+    --accent-red: #EF5350;
+    --border-color: #E8ECEF;
+    --border-dark: #2D2D44;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft YaHei UI', sans-serif;
+    background: var(--bg-primary); color: var(--text-primary);
+    font-size: 14px; line-height: 1.5; min-height: 100vh;
+  }
+  .page-header {
+    background: var(--bg-card-dark); color: var(--text-white);
+    padding: 12px 28px; display: flex; align-items: center; gap: 16px;
+    font-size: 13px;
+  }
+  .page-header .logo { font-weight:700; font-size:16px; letter-spacing:0.5px; }
+  .page-header .tag { font-size:11px; color: var(--text-muted); }
+  .page-container { max-width: 1060px; margin:0 auto; padding:24px 24px 40px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size:20px; font-weight:600; margin-bottom:4px; }
+  .section-subtitle { font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+
+  /* ── Toolbar ── */
+  .toolbar-preview {
+    border:1px solid var(--border-color); border-radius:var(--radius-md);
+    overflow:hidden; background:var(--bg-secondary);
+    box-shadow: var(--shadow-sm);
+  }
+  .toolbar-bar {
+    display:flex; align-items:center; height:40px;
+    background: var(--bg-primary); border-bottom:1px solid var(--border-color);
+    padding:0 6px; gap:0;
+  }
+  .tbar-brand {
+    width:28px; height:22px; background:var(--accent-green);
+    border-radius:6px; color:var(--text-white);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; margin:0 8px 0 2px; flex-shrink:0;
+  }
+  .tbar-sep { width:1px; height:24px; background:var(--border-color); margin:0 3px; flex-shrink:0; }
+  .tbar-btn {
+    position:relative; background:transparent; border:1px solid transparent;
+    color:var(--text-primary); font-size:12px; font-family:inherit;
+    padding:5px 12px; margin:2px 1px; border-radius:var(--radius-sm);
+    cursor:pointer; white-space:nowrap; user-select:none;
+    display:flex; align-items:center; gap:3px;
+    transition:background 0.15s, border-color 0.15s;
+  }
+  .tbar-btn:hover { background:var(--border-color); border-color:var(--text-muted); }
+  .tbar-btn.active { background:var(--bg-card-green); border-color:var(--accent-green); }
+  .tbar-btn .arrow { font-size:8px; color:var(--text-muted); margin-left:2px; }
+  .tbar-right { margin-left:auto; display:flex; align-items:center; gap:10px; padding-right:8px; }
+  .tbar-user { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-secondary); }
+  .tbar-avatar { width:22px; height:22px; border-radius:50%; background:var(--text-muted); flex-shrink:0; }
+  .dropdown-panel {
+    display:none; position:absolute; top:100%; left:0; z-index:100;
+    background:var(--bg-secondary); border:1px solid var(--border-color);
+    border-radius:var(--radius-md); min-width:150px;
+    box-shadow:var(--shadow-md); padding:5px 0;
+  }
+  .tbar-btn.active .dropdown-panel { display:block; }
+  .dropdown-item {
+    display:block; width:100%; padding:0 14px; height:36px; line-height:36px;
+    background:transparent; border:none; color:var(--text-primary);
+    font-size:13px; font-family:inherit; text-align:left; cursor:pointer;
+    transition:background 0.12s, color 0.12s;
+  }
+  .dropdown-item:hover { background:var(--bg-card-green); color:#2E7D32; }
+  .dropdown-sep { height:1px; background:var(--border-color); margin:3px 10px; }
+  .cdr-workspace {
+    height:180px; background:linear-gradient(135deg, #f8f8f8 0%, #eeeeee 100%);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); font-size:13px; flex-direction:column;
+  }
+
+  /* ── Palette ── */
+  .palette-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+  .palette-card { background:var(--bg-secondary); border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-sm); }
+  .palette-swatch { height:64px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; }
+  .palette-info { padding:10px 12px; background:var(--bg-secondary); }
+  .palette-name { font-weight:600; font-size:12px; margin-bottom:3px; }
+  .palette-hex { font-size:11px; color:var(--text-secondary); font-family:Consolas,monospace; background:var(--bg-primary); padding:2px 6px; border-radius:4px; display:inline-block; }
+  .sw-green { background:var(--accent-green); color:#fff; }
+  .sw-green-light { background:var(--bg-card-green); color:#2E7D32; }
+  .sw-blue { background:var(--accent-blue); color:#fff; }
+  .sw-blue-light { background:var(--bg-card-blue); color:#1565C0; }
+  .sw-orange { background:var(--accent-orange); color:#fff; }
+  .sw-orange-light { background:var(--bg-card-orange); color:#EF6C00; }
+  .sw-red { background:var(--accent-red); color:#fff; }
+  .sw-dark { background:var(--bg-card-dark); color:#fff; }
+  .sw-bg { background:var(--bg-primary); color:var(--text-secondary); border:1px solid var(--border-color); }
+  .sw-white { background:#fff; color:var(--text-secondary); border:1px solid var(--border-color); }
+  .sw-text { background:var(--bg-primary); display:flex; flex-direction:column; gap:4px; padding:12px; font-weight:400; }
+
+  /* ── Typography ── */
+  .type-row { display:flex; align-items:baseline; gap:16px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--bg-secondary); border:1px solid var(--border-color); margin-bottom:4px; }
+  .type-label { font-size:11px; color:var(--text-muted); min-width:90px; flex-shrink:0; }
+  .type-size { font-size:11px; color:var(--text-muted); margin-left:auto; font-family:monospace; }
+
+  /* ── Components ── */
+  .comp-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+  .comp-card { background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:18px; box-shadow:var(--shadow-sm); }
+  .comp-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; font-weight:600; }
+  .comp-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+  .comp-row:last-child { margin-bottom:0; }
+  .btn-primary { display:inline-flex; align-items:center; justify-content:center; height:40px; padding:0 24px; background:var(--bg-card-dark); border:1px solid var(--bg-card-dark); color:var(--text-white); font-size:14px; font-family:inherit; border-radius:var(--radius-sm); cursor:pointer; transition:background 0.15s; }
+  .btn-primary:hover { background:#2D2D44; }
+  .btn-green { display:inline-flex; align-items:center; justify-content:center; height:40px; padding:0 24px; background:var(--bg-card-green); border:none; color:#2E7D32; font-size:14px; font-family:inherit; border-radius:var(--radius-sm); cursor:pointer; transition:background 0.15s; }
+  .btn-green:hover { background:#C8E6C9; }
+  .btn-outline { display:inline-flex; align-items:center; justify-content:center; height:40px; padding:0 24px; background:transparent; border:1px solid var(--border-color); color:var(--text-secondary); font-size:14px; font-family:inherit; border-radius:var(--radius-sm); cursor:pointer; transition:background 0.15s; }
+  .btn-outline:hover { background:var(--bg-primary); }
+  .btn-ghost { background:transparent; border:none; color:var(--text-secondary); font-size:12px; font-family:inherit; cursor:pointer; padding:4px 8px; }
+  .btn-ghost:hover { color:var(--text-primary); }
+  .input-demo { height:38px; padding:0 12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:14px; font-family:inherit; color:var(--text-primary); background:var(--bg-secondary); outline:none; min-width:180px; }
+  .input-demo:focus { border-color:var(--accent-green); box-shadow:0 0 0 3px rgba(129,199,132,0.15); }
+  .tag { display:inline-block; padding:3px 10px; border-radius:6px; font-size:11px; font-weight:500; }
+  .tag-g { background:var(--bg-card-green); color:#2E7D32; }
+  .tag-b { background:var(--bg-card-blue); color:#1565C0; }
+  .tag-o { background:var(--bg-card-orange); color:#EF6C00; }
+  .tag-r { background:rgba(239,83,80,0.1); color:var(--accent-red); }
+  .stat-card { border-radius:var(--radius-lg); padding:20px 24px; display:flex; flex-direction:column; gap:6px; min-width:160px; }
+  .stat-value { font-size:26px; font-weight:700; }
+  .stat-label { font-size:12px; opacity:0.8; }
+  .stat-change { font-size:11px; font-weight:500; }
+  .stat-green { background:linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); color:#2E7D32; }
+  .stat-blue { background:linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); color:#1565C0; }
+  .stat-orange { background:linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); color:#EF6C00; }
+
+  /* ── Sidebar ── */
+  .sidebar-demo { display:flex; height:440px; border:1px solid var(--border-color); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-secondary); box-shadow:var(--shadow-sm); }
+  .sidebar-nav { width:130px; background:var(--bg-card-dark); display:flex; flex-direction:column; flex-shrink:0; }
+  .sidebar-brand { height:60px; background:#151528; display:flex; align-items:center; justify-content:center; border-bottom:2px solid var(--accent-green); color:var(--text-white); font-size:17px; font-weight:700; }
+  .sidebar-items { flex:1; padding:8px 0; }
+  .sidebar-item { display:flex; align-items:center; height:48px; padding:0 0 0 20px; background:transparent; border:none; width:100%; color:var(--text-muted); font-size:13px; font-family:inherit; cursor:pointer; text-align:left; transition:all 0.15s; }
+  .sidebar-item:hover { background:var(--border-dark); }
+  .sidebar-item.active { background:var(--accent-green); color:var(--bg-card-dark); font-weight:600; }
+  .sidebar-footer { height:52px; background:#151528; display:flex; align-items:center; gap:8px; padding:0 14px; color:var(--text-muted); font-size:12px; }
+  .sidebar-footer .av28 { width:26px; height:26px; border-radius:50%; background:#3A3A55; flex-shrink:0; }
+  .sidebar-content { flex:1; padding:20px; display:flex; flex-direction:column; }
+  .sidebar-content .stitle { font-size:20px; font-weight:600; margin-bottom:6px; }
+  .sidebar-content .ssub { font-size:14px; color:var(--text-secondary); margin-bottom:16px; }
+  .sidebar-content .sbody { flex:1; color:var(--text-muted); font-size:13px; }
+  .sidebar-statusbar { height:32px; background:var(--bg-primary); border-top:1px solid var(--border-color); display:flex; align-items:center; padding:0 12px; gap:6px; font-size:11px; color:var(--text-muted); }
+
+  /* ── Radii ── */
+  .radius-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:12px; }
+  .radius-item { text-align:center; padding:16px; background:var(--bg-secondary); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); }
+  .radius-box { width:56px; height:56px; margin:0 auto 10px; background:var(--bg-card-dark); }
+  .radius-label { font-size:11px; color:var(--text-secondary); font-weight:600; }
+
+  /* spacing */
+  .spacing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(80px,1fr)); gap:10px; }
+  .spacing-item { text-align:center; padding:10px; background:var(--bg-secondary); border-radius:var(--radius-sm); box-shadow:var(--shadow-sm); }
+  .spacing-bar { background:rgba(129,199,132,0.35); margin:0 auto 6px; border-radius:3px; height:28px; }
+  .spacing-val { font-size:12px; font-weight:600; }
+
+</style>
+</head>
+<body>
+<div class="page-header"><span class="logo">QiTuCDR</span><span class="tag">Design System v2.0 · Light & Soft Theme</span></div>
+<div class="page-container">
+
+  <!-- 1. Toolbar -->
+  <div class="section">
+    <div class="section-title">横向工具栏</div>
+    <div class="section-subtitle">AddonEntry — #F8F9FA 底 · 8px 圆角按钮 · 绿色强调选中态</div>
+    <div class="toolbar-preview">
+      <div class="toolbar-bar">
+        <div class="tbar-brand">Q</div><div class="tbar-sep"></div>
+        <div class="tbar-btn" onclick="this.classList.toggle('active')">工具面板<span class="arrow">&#9662;</span>
+          <div class="dropdown-panel">
+            <button class="dropdown-item">批量对齐</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">等间距分布</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">尺寸统一</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">批量替换</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">批量导出</button>
+          </div>
+        </div><div class="tbar-sep"></div>
+        <div class="tbar-btn" onclick="this.classList.toggle('active')">排版工具<span class="arrow">&#9662;</span>
+          <div class="dropdown-panel">
+            <button class="dropdown-item">批量对齐</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">等间距分布</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">尺寸统一</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">群组管理</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">图层批量操作</button>
+          </div>
+        </div><div class="tbar-sep"></div>
+        <div class="tbar-btn" onclick="this.classList.toggle('active')">图形工具<span class="arrow">&#9662;</span>
+          <div class="dropdown-panel">
+            <button class="dropdown-item">批量替换</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">批量导出</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">智能裁切</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">圆角生成</button>
+          </div>
+        </div><div class="tbar-sep"></div>
+        <div class="tbar-btn" onclick="this.classList.toggle('active')">文字工具<span class="arrow">&#9662;</span>
+          <div class="dropdown-panel">
+            <button class="dropdown-item">字体批量替换</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">文字转曲</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">文字统计</button>
+          </div>
+        </div><div class="tbar-sep"></div>
+        <div class="tbar-btn" onclick="this.classList.toggle('active')">颜色工具<span class="arrow">&#9662;</span>
+          <div class="dropdown-panel">
+            <button class="dropdown-item">色板管理</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">颜色批量替换</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">色彩分析</button>
+          </div>
+        </div><div class="tbar-sep"></div>
+        <div class="tbar-btn" onclick="this.classList.toggle('active')">AI 助手<span class="arrow">&#9662;</span>
+          <div class="dropdown-panel">
+            <button class="dropdown-item">AI 文案改写</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">AI 排版建议</button><div class="dropdown-sep"></div>
+            <button class="dropdown-item">AI 色彩推荐</button>
+          </div>
+        </div>
+        <div class="tbar-right">
+          <div class="tbar-btn" style="padding:5px 8px;">设置</div>
+          <div class="tbar-user"><div class="tbar-avatar"></div>未登录</div>
+        </div>
+      </div>
+      <div class="cdr-workspace">← CorelDRAW 画布区域 →<br><small>工具栏嵌入在 CDR 原生工具条中</small></div>
+    </div>
+  </div>
+
+  <!-- 2. Color -->
+  <div class="section">
+    <div class="section-title">色彩系统</div>
+    <div class="section-subtitle">浅色柔和调性 · 三色语义：绿 #81C784 · 蓝 #64B5F6 · 橙 #FFB74D · 深海军蓝 #1A1A2E</div>
+    <div class="palette-grid">
+      <div class="palette-card"><div class="palette-swatch sw-green">主色 Green</div><div class="palette-info"><div class="palette-name">Brand Primary</div><span class="palette-hex">#81C784</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-green-light">浅绿 Light</div><div class="palette-info"><div class="palette-name">Brand Light</div><span class="palette-hex">#E8F5E9</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-dark">深海军蓝 Dark</div><div class="palette-info"><div class="palette-name">Brand Dark</div><span class="palette-hex">#1A1A2E</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-bg">背景主色</div><div class="palette-info"><div class="palette-name">Bg Primary</div><span class="palette-hex">#F8F9FA</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-white">卡片白</div><div class="palette-info"><div class="palette-name">Bg Secondary</div><span class="palette-hex">#FFFFFF</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-blue">信息蓝</div><div class="palette-info"><div class="palette-name">Accent Blue</div><span class="palette-hex">#64B5F6</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-orange">警告橙</div><div class="palette-info"><div class="palette-name">Accent Orange</div><span class="palette-hex">#FFB74D</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-red">错误红</div><div class="palette-info"><div class="palette-name">Accent Red</div><span class="palette-hex">#EF5350</span></div></div>
+      <div class="palette-card"><div class="palette-swatch sw-text"><span style="font-size:15px;font-weight:600;color:#2D3436">Primary #2D3436</span><span style="font-size:13px;color:#636E72">Secondary #636E72</span><span style="font-size:11px;color:#B2BEC3">Tertiary #B2BEC3</span></div><div class="palette-info"><div class="palette-name">文字层级</div></div></div>
+    </div>
+  </div>
+
+  <!-- 3. Typography -->
+  <div class="section">
+    <div class="section-title">字体排版</div>
+    <div class="type-row"><span class="type-label">24 Xxl</span><span style="font-size:24px;font-weight:600;">Dashboard 大标题</span><span class="type-size">FontSizeXxl 24px</span></div>
+    <div class="type-row"><span class="type-label">20 Xl</span><span style="font-size:20px;font-weight:600;">页面标题 H1</span><span class="type-size">FontSizeXl 20px SemiBold</span></div>
+    <div class="type-row"><span class="type-label">16 Lg</span><span style="font-size:16px;font-weight:700;">品牌 Logo Title</span><span class="type-size">FontSizeLg 16px Bold</span></div>
+    <div class="type-row"><span class="type-label">14 Md</span><span style="font-size:14px;">正文 / 副标题 / 按钮文字 / 输入框</span><span class="type-size">FontSizeMd 14px</span></div>
+    <div class="type-row"><span class="type-label">13 MenuItem</span><span style="font-size:13px;">下拉菜单项 / 竖向导航按钮</span><span class="type-size">FontSizeMenuItem 13px</span></div>
+    <div class="type-row"><span class="type-label">12 Sm</span><span style="font-size:12px;">工具栏按钮 / 占位文案 / 链接按钮</span><span class="type-size">FontSizeSm 12px</span></div>
+    <div class="type-row"><span class="type-label">11 Caption</span><span style="font-size:11px;color:var(--text-muted)">状态栏信息 / 辅助标注</span><span class="type-size">FontSizeCaption 11px</span></div>
+    <div class="type-row"><span class="type-label">10 Xs</span><span style="font-size:10px;color:var(--text-muted)">箭头符号 ▾</span><span class="type-size">FontSizeXs 10px</span></div>
+  </div>
+
+  <!-- 4. Components -->
+  <div class="section">
+    <div class="section-title">组件预览</div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-label">按钮 — Primary</div>
+        <div class="comp-row"><button class="btn-primary">深色主按钮</button><button class="btn-green">绿色次按钮</button></div>
+        <div class="comp-row"><button class="btn-outline">边框按钮</button><button class="btn-ghost">幽灵按钮 →</button></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-label">表单 — Input</div>
+        <div class="comp-row"><input class="input-demo" type="text" placeholder="输入邮箱..." style="width:100%"></div>
+        <div class="comp-row"><input class="input-demo" type="password" placeholder="输入密码..." style="width:100%"></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-label">标签 — Tags</div>
+        <div class="comp-row"><span class="tag tag-g">成功</span><span class="tag tag-b">信息</span><span class="tag tag-o">警告</span><span class="tag tag-r">错误</span></div>
+        <div class="comp-row" style="margin-top:2px;"><span style="font-size:12px;color:#4CAF50;">✓ 操作成功</span><span style="font-size:12px;color:#FF9800;">⚠ 警告</span><span style="font-size:12px;color:var(--accent-red);">✕ 错误</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-label">统计— Stat Cards</div>
+        <div class="comp-row"><div class="stat-card stat-green"><span class="stat-value">¥1,200</span><span class="stat-label">总收入</span><span class="stat-change">↑ 45% 本周</span></div></div>
+        <div class="comp-row"><div class="stat-card stat-blue"><span class="stat-value">600</span><span class="stat-label">导出次数</span><span class="stat-change">↑ 21% 本周</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Sidebar -->
+  <div class="section">
+    <div class="section-title">竖向导航栏布局</div>
+    <div class="section-subtitle">MainWindow — 130px #1A1A2E 深海军蓝侧栏 + 白色内容区</div>
+    <div class="sidebar-demo">
+      <div class="sidebar-nav">
+        <div class="sidebar-brand">QiTuCDR</div>
+        <div class="sidebar-items">
+          <button class="sidebar-item active">工具面板</button>
+          <button class="sidebar-item">排版工具</button>
+          <button class="sidebar-item">图形工具</button>
+          <button class="sidebar-item">文字工具</button>
+          <button class="sidebar-item">颜色工具</button>
+          <button class="sidebar-item">AI 助手</button>
+          <button class="sidebar-item">设置</button>
+        </div>
+        <div class="sidebar-footer"><div class="av28"></div>未登录</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;">
+        <div class="sidebar-content">
+          <div class="stitle">工具面板</div>
+          <div class="ssub">欢迎使用 QiTuCDR 企图插件。请从左侧导航选择功能分类。</div>
+          <div class="sbody"><div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">常用工具</div>暂无常用工具，使用后自动记录。</div>
+        </div>
+        <div class="sidebar-statusbar"><span>CDR V26</span><span>|</span><span>就绪</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Spacing & Radius -->
+  <div class="section">
+    <div class="section-title">圆角规范</div>
+    <div class="radius-grid">
+      <div class="radius-item"><div class="radius-box" style="border-radius:8px;"></div><div class="radius-label">Sm · 8px</div></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:12px;"></div><div class="radius-label">Md · 12px</div></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:16px;"></div><div class="radius-label">Lg · 16px</div></div>
+      <div class="radius-item"><div class="radius-box" style="border-radius:20px;"></div><div class="radius-label">Xl · 20px</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">间距规范</div>
+    <div class="spacing-grid">
+      <div class="spacing-item"><div class="spacing-bar" style="width:8px;"></div><div class="spacing-val">8px</div></div>
+      <div class="spacing-item"><div class="spacing-bar" style="width:12px;"></div><div class="spacing-val">12px</div></div>
+      <div class="spacing-item"><div class="spacing-bar" style="width:16px;"></div><div class="spacing-val">16px</div></div>
+      <div class="spacing-item"><div class="spacing-bar" style="width:20px;"></div><div class="spacing-val">20px</div></div>
+      <div class="spacing-item"><div class="spacing-bar" style="width:24px;"></div><div class="spacing-val">24px</div></div>
+      <div class="spacing-item"><div class="spacing-bar" style="width:32px;"></div><div class="spacing-val">32px</div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.tbar-btn')){
+    document.querySelectorAll('.tbar-btn.active').forEach(b=>b.classList.remove('active'))
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>WPF 宿主窗口</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Microsoft YaHei}
+body{background:#222;height:100vh;display:flex;align-items:center;justify-content:center}
+
+.wpf-win{
+  width:820px;height:460px;background:#fff;border:1px solid #777;
+  border-radius:6px;box-shadow:0 10px 30px #0004;
+  display:flex;flex-direction:column;overflow:hidden;position:relative;user-select:none
+}
+
+.title-bar{
+  height:32px;background:#f0f0f0;border-bottom:1px solid #ccc;
+  display:flex;align-items:center;padding:0 8px;cursor:move
+}
+.win-icon{
+  width:16px;height:16px;background:#333;border-radius:2px;
+  margin-right:8px;display:grid;place-items:center;color:#fff;font-size:12px
+}
+.win-title{flex:1;font-size:13px;color:#333;}
+.bar-buttons{display:flex;gap:2px}
+.btn{
+  width:44px;height:30px;display:grid;place-items:center;
+  font-size:14px;cursor:pointer;transition:background .15s;color:#333;
+}
+.btn:hover{background:#e0e0e0}
+.btn.close:hover{background:#e81123;color:#fff}
+
+.host-panel{flex:1;background:#f8f8f8;padding:20px;user-select:text;overflow:auto}
+.info{font-size:14px;color:#444;line-height:1.7}
+
+.wpf-win.collapse .host-panel{display:none}
+.wpf-win.collapse{height:32px}
+</style>
+</head>
+<body>
+
+<div class="wpf-win" id="win">
+  <div class="title-bar" id="bar">
+    <div class="win-icon">W</div>
+    <div class="win-title">WPF 原生宿主窗口</div>
+    <div class="bar-buttons">
+      <div class="btn" id="pin" title="置顶">○</div>
+      <div class="btn" id="cfg" title="设置">■</div>
+      <div class="btn" id="fold" title="收起">─</div>
+      <div class="btn close" id="close" title="关闭">×</div>
+    </div>
+  </div>
+  <div class="host-panel">
+    <div class="info">
+      <strong>WPF 宿主窗口（HwndHost）</strong><br>
+      窗口句柄：IntPtr HostHandle<br>
+      承载类型：Win32 / CDR插件 / 子窗口<br>
+      消息钩子：WndProc 原生消息循环
+    </div>
+  </div>
+</div>
+
+<script>
+const win=document.getElementById('win'),bar=document.getElementById('bar');
+let drag=0,ox=0,oy=0;
+bar.onmousedown=e=>{drag=1;ox=e.clientX-win.offsetLeft;oy=e.clientY-win.offsetTop;win.style.zIndex=9999};
+document.onmousemove=e=>{if(!drag)return;win.style.left=(e.clientX-ox)+'px';win.style.top=(e.clientY-oy)+'px'};
+document.onmouseup=()=>drag=0;
+
+let isPin=false;
+document.getElementById('pin').onclick=()=>{
+  isPin=!isPin;
+  win.style.zIndex=isPin?9999:1;
+  document.getElementById('pin').innerHTML = isPin ? "●" : "○";
+};
+
+document.getElementById('cfg').onclick=()=>alert('打开设置');
+
+let folded=false;
+const foldBtn=document.getElementById('fold');
+foldBtn.onclick=()=>{
+  folded=!folded;win.classList.toggle('collapse');
+  foldBtn.textContent=folded?'□':'─';
+  foldBtn.title=folded?'展开':'收起'
+};
+
+document.getElementById('close').onclick=()=>win.style.display='none';
+</script>
+</body>
+</html>

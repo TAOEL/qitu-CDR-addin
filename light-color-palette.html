@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDR PowerTools - 浅色主题色彩规范</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F8F9FA;
+            --bg-secondary: #FFFFFF;
+            --bg-card-dark: #1A1A2E;
+            --bg-card-light: #FFFFFF;
+            --bg-card-green: #E8F5E9;
+            --bg-card-blue: #E3F2FD;
+            --bg-card-pink: #FFF3E0;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --text-muted: #B2BEC3;
+            --text-white: #FFFFFF;
+            --accent-green: #81C784;
+            --accent-blue: #64B5F6;
+            --accent-pink: #FFB74D;
+            --accent-red: #EF5350;
+            --border-color: #E8ECEF;
+            --border-dark: #2D2D44;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding: 40px;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .color-section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-left: 12px;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .color-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .color-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .color-preview {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .color-info {
+            padding: 14px;
+            background: var(--bg-secondary);
+        }
+
+        .color-name {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .color-value {
+            font-family: 'Inter', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* 背景色预览 */
+        .bg-preview-light { background: #F8F9FA; color: #636E72; }
+        .bg-preview-white { background: #FFFFFF; color: #636E72; }
+        .bg-preview-dark { background: #1A1A2E; color: #FFFFFF; }
+
+        /* 卡片色 */
+        .card-green { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); color: #2E7D32; }
+        .card-blue { background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); color: #1565C0; }
+        .card-pink { background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); color: #EF6C00; }
+
+        /* 功能色 */
+        .accent-green-preview { background: #81C784; color: #FFF; }
+        .accent-blue-preview { background: #64B5F6; color: #FFF; }
+        .accent-pink-preview { background: #FFB74D; color: #FFF; }
+        .accent-red-preview { background: #EF5350; color: #FFF; }
+        .accent-gray-preview { background: #B2BEC3; color: #FFF; }
+
+        /* 文字色 */
+        .text-preview {
+            background: #F8F9FA;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .text-preview .primary { color: #2D3436; font-size: 16px; font-weight: 600; }
+        .text-preview .secondary { color: #636E72; font-size: 14px; }
+        .text-preview .muted { color: #B2BEC3; font-size: 12px; }
+
+        /* 组件预览区 */
+        .component-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .component-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .component-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .component-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            width: 100%;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--bg-card-dark);
+            color: var(--text-white);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .btn-green {
+            background: var(--bg-card-green);
+            color: #2E7D32;
+        }
+
+        .btn-green:hover {
+            background: #C8E6C9;
+        }
+
+        .btn-blue {
+            background: var(--bg-card-blue);
+            color: #1565C0;
+        }
+
+        .btn-blue:hover {
+            background: #BBDEFB;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-primary);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-primary);
+        }
+
+        /* 输入框 */
+        .input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            min-width: 200px;
+        }
+
+        .input:focus {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.15);
+        }
+
+        .input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* 卡片组件 */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            width: 260px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* 深色卡片 */
+        .card-dark {
+            background: var(--bg-card-dark);
+            border: none;
+            width: 280px;
+        }
+
+        .card-dark .card-header {
+            color: var(--text-white);
+        }
+
+        .card-dark .card-content {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tag-green {
+            background: var(--bg-card-green);
+            color: #2E7D32;
+        }
+
+        .tag-blue {
+            background: var(--bg-card-blue);
+            color: #1565C0;
+        }
+
+        .tag-pink {
+            background: var(--bg-card-pink);
+            color: #EF6C00;
+        }
+
+        .tag-red {
+            background: rgba(239, 83, 80, 0.1);
+            color: #EF5350;
+        }
+
+        /* 图标 */
+        .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .icon-green {
+            background: var(--bg-card-green);
+            color: #4CAF50;
+        }
+
+        .icon-blue {
+            background: var(--bg-card-blue);
+            color: #2196F3;
+        }
+
+        .icon-pink {
+            background: var(--bg-card-pink);
+            color: #FF9800;
+        }
+
+        .icon-dark {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* 进度条 */
+        .progress {
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+            width: 180px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-green { background: linear-gradient(90deg, #81C784, #4CAF50); }
+        .progress-blue { background: linear-gradient(90deg, #64B5F6, #2196F3); }
+        .progress-pink { background: linear-gradient(90deg, #FFB74D, #FF9800); }
+
+        /* 开关 */
+        .toggle {
+            width: 44px;
+            height: 22px;
+            background: #E8ECEF;
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent-green);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle.active::after {
+            transform: translateX(22px);
+        }
+
+        /* 表格 */
+        .table {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+        }
+
+        .table-header {
+            background: var(--bg-primary);
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-row {
+            padding: 14px 16px;
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.1s ease;
+        }
+
+        .table-row:hover {
+            background: var(--bg-primary);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-col {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .table-col-secondary {
+            color: var(--text-secondary);
+        }
+
+        .table-col-success {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+
+        /* 统计卡片 */
+        .stat-card {
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 180px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .stat-change {
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-green {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            color: #2E7D32;
+        }
+
+        .stat-blue {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            color: #1565C0;
+        }
+
+        .stat-pink {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            color: #EF6C00;
+        }
+
+        /* 图表区域 */
+        .chart-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-top: 16px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            height: 150px;
+            position: relative;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .chart-path {
+            fill: none;
+            stroke: #2D3436;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .chart-area {
+            fill: url(#chartGradient);
+        }
+
+        /* 完整仪表盘展示 */
+        .dashboard-showcase {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 16px;
+            width: 240px;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* 统计卡片网格 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* 深色面板 */
+        .dark-panel {
+            background: var(--bg-card-dark);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .dark-panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: 16px;
+        }
+
+        .dark-panel-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-dark);
+            align-items: center;
+        }
+
+        .dark-panel-row:last-child {
+            border-bottom: none;
+        }
+
+        .dark-panel-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .dark-panel-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+
+        /* 圆角展示 */
+        .radius-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+        }
+
+        .radius-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .radius-preview {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+            background: var(--bg-card-dark);
+        }
+
+        .radius-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .radius-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* 间距展示 */
+        .spacing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .spacing-item {
+            text-align: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .spacing-visual {
+            background: rgba(129, 199, 132, 0.3);
+            margin: 0 auto 8px;
+            border-radius: 3px;
+        }
+
+        .spacing-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 字体展示 */
+        .font-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .font-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .font-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .font-preview {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .font-sizes {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .font-size-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .font-size-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            width: 50px;
+        }
+
+        .font-sample {
+            color: var(--text-primary);
+        }
+
+        .size-24 { font-size: 24px; }
+        .size-20 { font-size: 20px; }
+        .size-16 { font-size: 16px; }
+        .size-14 { font-size: 14px; }
+        .size-12 { font-size: 12px; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题 -->
+        <div class="header">
+            <h1>🎨 CDR PowerTools 浅色主题色彩规范</h1>
+            <p>清新柔和 · 现代简约 · 参考钱包Dashboard风格</p>
+        </div>
+
+        <!-- 主色调 -->
+        <div class="color-section">
+            <h2 class="section-title">主色调 Primary Colors</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-preview stat-green">绿色系</div>
+                    <div class="color-info">
+                        <div class="color-name">Success / Green</div>
+                        <div class="color-value">#81C784</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview stat-blue">蓝色系</div>
+                    <div class="color-info">
+                        <div class="color-name">Info / Blue</div>
+                        <div class="color-value">#64B5F6</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview stat-pink">橙色系</div>
+                    <div class="color-info">
+                        <div class="color-name">Warning / Orange</div>
+                        <div class="color-value">#FFB74D</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview accent-red-preview">红色系</div>
+                    <div class="color-info">
+                        <div class="color-name">Error / Red</div>
+                        <div class="color-value">#EF5350</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview bg-preview-dark">深色系</div>
+                    <div class="color-info">
+                        <div class="color-name">Dark / Primary</div>
+                        <div class="color-value">#1A1A2E</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 背景色 -->
+        <div class="color-section">
+            <h2 class="section-title">背景色 Background</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-preview bg-preview-light">背景主色</div>
+                    <div class="color-info">
+                        <div class="color-name">Background Primary</div>
+                        <div class="color-value">#F8F9FA</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview bg-preview-white">卡片背景</div>
+                    <div class="color-info">
+                        <div class="color-name">Card Background</div>
+                        <div class="color-value">#FFFFFF</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview bg-preview-dark">深色卡片</div>
+                    <div class="color-info">
+                        <div class="color-name">Dark Card</div>
+                        <div class="color-value">#1A1A2E</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片色 -->
+        <div class="color-section">
+            <h2 class="section-title">卡片渐变 Card Gradients</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-preview card-green">BTC</div>
+                    <div class="color-info">
+                        <div class="color-name">Green Card</div>
+                        <div class="color-value">#E8F5E9 → #C8E6C9</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview card-blue">ETH</div>
+                    <div class="color-info">
+                        <div class="color-name">Blue Card</div>
+                        <div class="color-value">#E3F2FD → #BBDEFB</div>
+                    </div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview card-pink">NEO</div>
+                    <div class="color-info">
+                        <div class="color-name">Orange Card</div>
+                        <div class="color-value">#FFF3E0 → #FFE0B2</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文字色 -->
+        <div class="color-section">
+            <h2 class="section-title">文字色 Typography</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-preview text-preview">
+                        <span class="primary">主要文字</span>
+                        <span class="secondary">次要文字</span>
+                        <span class="muted">禁用文字</span>
+                    </div>
+                    <div class="color-info">
+                        <div class="color-name">Text Hierarchy</div>
+                        <div class="color-value">#2D3436 / #636E72 / #B2BEC3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 组件预览 -->
+        <div class="color-section">
+            <h2 class="section-title">组件预览 Components</h2>
+            
+            <!-- 按钮 -->
+            <div class="component-section">
+                <div class="component-row">
+                    <div class="component-label">按钮 Button</div>
+                    <button class="btn btn-primary">深色按钮</button>
+                    <button class="btn btn-green">绿色按钮</button>
+                    <button class="btn btn-blue">蓝色按钮</button>
+                    <button class="btn btn-outline">边框按钮</button>
+                    <button class="btn btn-ghost">幽灵按钮</button>
+                </div>
+
+                <!-- 输入框 -->
+                <div class="component-row">
+                    <div class="component-label">输入框 Input</div>
+                    <input type="text" class="input" placeholder="请输入内容...">
+                </div>
+
+                <!-- 标签 -->
+                <div class="component-row">
+                    <div class="component-label">标签 Tag</div>
+                    <span class="tag tag-green">成功</span>
+                    <span class="tag tag-blue">信息</span>
+                    <span class="tag tag-pink">警告</span>
+                    <span class="tag tag-red">错误</span>
+                </div>
+
+                <!-- 图标 -->
+                <div class="component-row">
+                    <div class="component-label">图标 Icon</div>
+                    <div class="icon icon-green">📊</div>
+                    <div class="icon icon-blue">💎</div>
+                    <div class="icon icon-pink">🔥</div>
+                    <div class="icon icon-dark">⚙️</div>
+                </div>
+
+                <!-- 进度条 -->
+                <div class="component-row">
+                    <div class="component-label">进度条 Progress</div>
+                    <div class="progress"><div class="progress-bar progress-green" style="width: 75%;"></div></div>
+                    <div class="progress"><div class="progress-bar progress-blue" style="width: 60%;"></div></div>
+                    <div class="progress"><div class="progress-bar progress-pink" style="width: 45%;"></div></div>
+                </div>
+
+                <!-- 开关 -->
+                <div class="component-row">
+                    <div class="component-label">开关 Toggle</div>
+                    <div class="toggle active"></div>
+                    <div class="toggle"></div>
+                </div>
+
+                <!-- 卡片 -->
+                <div class="component-row">
+                    <div class="component-label">卡片 Card</div>
+                    <div class="card">
+                        <div class="card-header">功能卡片</div>
+                        <div class="card-content">这是一个浅色卡片示例，用于展示功能信息。</div>
+                    </div>
+                    <div class="card card-dark">
+                        <div class="card-header">深色卡片</div>
+                        <div class="card-content">这是一个深色卡片示例，用于突出重要信息。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 完整仪表盘展示 -->
+        <div class="color-section">
+            <h2 class="section-title">仪表盘展示 Dashboard Preview</h2>
+            <div class="dashboard-showcase">
+                <div class="dashboard-header">
+                    <div class="dashboard-title">Dashboard</div>
+                    <input type="text" class="search-box" placeholder="搜索...">
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card stat-green">
+                        <span class="stat-value">$1200</span>
+                        <span class="stat-label">Total Balance</span>
+                        <span class="stat-change">↑ 45% This week</span>
+                    </div>
+                    <div class="stat-card stat-blue">
+                        <span class="stat-value">$232,40</span>
+                        <span class="stat-label">Earnings</span>
+                        <span class="stat-change">↑ 35% This week</span>
+                    </div>
+                    <div class="stat-card stat-pink">
+                        <span class="stat-value">600</span>
+                        <span class="stat-label">Transactions</span>
+                        <span class="stat-change">↑ 21% This week</span>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <div class="chart-title">Market Overview</div>
+                    <div class="chart-container">
+                        <svg viewBox="0 0 800 150" preserveAspectRatio="none" class="chart-line">
+                            <defs>
+                                <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#2D3436;stop-opacity:0.2" />
+                                    <stop offset="100%" style="stop-color:#2D3436;stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                            <path class="chart-area" d="M0,150 L0,80 Q100,50 200,60 T400,40 T600,70 T800,30 L800,150 Z" />
+                            <path class="chart-path" d="M0,80 Q100,50 200,60 T400,40 T600,70 T800,30" />
+                            <circle cx="100" cy="50" r="6" fill="#2D3436" />
+                            <circle cx="300" cy="40" r="6" fill="#2D3436" />
+                            <circle cx="500" cy="70" r="6" fill="#2D3436" />
+                            <circle cx="700" cy="30" r="6" fill="#2D3436" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 20px; margin-top: 20px;">
+                    <div style="flex: 1;">
+                        <div class="table">
+                            <div class="table-header">
+                                <span>Name</span>
+                                <span>Time</span>
+                                <span>Amount</span>
+                                <span>Status</span>
+                            </div>
+                            <div class="table-row">
+                                <span class="table-col">Bitcoin</span>
+                                <span class="table-col table-col-secondary">10:42 AM</span>
+                                <span class="table-col">+$145.00</span>
+                                <span class="table-col table-col-success">Completed</span>
+                            </div>
+                            <div class="table-row">
+                                <span class="table-col">Ethereum</span>
+                                <span class="table-col table-col-secondary">12:00 PM</span>
+                                <span class="table-col">+$745.00</span>
+                                <span class="table-col table-col-success">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dark-panel" style="width: 300px;">
+                        <div class="dark-panel-title">Sell Order</div>
+                        <div class="dark-panel-row">
+                            <span class="dark-panel-label">89.03</span>
+                            <span class="dark-panel-value">$126.00</span>
+                        </div>
+                        <div class="dark-panel-row">
+                            <span class="dark-panel-label">92.06</span>
+                            <span class="dark-panel-value">$252.00</span>
+                        </div>
+                        <div class="dark-panel-row">
+                            <span class="dark-panel-label">95.20</span>
+                            <span class="dark-panel-value">$176.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 圆角规范 -->
+        <div class="color-section">
+            <h2 class="section-title">圆角规范 Border Radius</h2>
+            <div class="radius-grid">
+                <div class="radius-item">
+                    <div class="radius-preview" style="border-radius: 4px;"></div>
+                    <div class="radius-label">Small</div>
+                    <div class="radius-value">4px</div>
+                </div>
+                <div class="radius-item">
+                    <div class="radius-preview" style="border-radius: 8px;"></div>
+                    <div class="radius-label">Medium</div>
+                    <div class="radius-value">8px</div>
+                </div>
+                <div class="radius-item">
+                    <div class="radius-preview" style="border-radius: 12px;"></div>
+                    <div class="radius-label">Large</div>
+                    <div class="radius-value">12px</div>
+                </div>
+                <div class="radius-item">
+                    <div class="radius-preview" style="border-radius: 16px;"></div>
+                    <div class="radius-label">XLarge</div>
+                    <div class="radius-value">16px</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 间距规范 -->
+        <div class="color-section">
+            <h2 class="section-title">间距规范 Spacing</h2>
+            <div class="spacing-grid">
+                <div class="spacing-item">
+                    <div class="spacing-visual" style="width: 8px; height: 30px;"></div>
+                    <div class="spacing-value">8px</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual" style="width: 12px; height: 30px;"></div>
+                    <div class="spacing-value">12px</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual" style="width: 16px; height: 30px;"></div>
+                    <div class="spacing-value">16px</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual" style="width: 20px; height: 30px;"></div>
+                    <div class="spacing-value">20px</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual" style="width: 24px; height: 30px;"></div>
+                    <div class="spacing-value">24px</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual" style="width: 32px; height: 30px;"></div>
+                    <div class="spacing-value">32px</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 字体规范 -->
+        <div class="color-section">
+            <h2 class="section-title">字体规范 Typography</h2>
+            <div class="font-section">
+                <div class="font-card">
+                    <div class="font-name">Display Font · Inter</div>
+                    <div class="font-preview">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+                    <div class="font-preview" style="font-weight: 400;">abcdefghijklmnopqrstuvwxyz</div>
+                </div>
+                <div class="font-card">
+                    <div class="font-name">中文 · Inter Fallback</div>
+                    <div class="font-preview" style="font-size: 24px;">中文设计字体</div>
+                    <div class="font-sizes">
+                        <div class="font-size-item">
+                            <span class="font-size-label">H1</span>
+                            <span class="font-sample size-24">标题文字</span>
+                        </div>
+                        <div class="font-size-item">
+                            <span class="font-size-label">H2</span>
+                            <span class="font-sample size-20">副标题文字</span>
+                        </div>
+                        <div class="font-size-item">
+                            <span class="font-size-label">Body</span>
+                            <span class="font-sample size-14">正文内容文字</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
