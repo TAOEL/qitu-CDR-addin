@@ -80,6 +80,7 @@ namespace QiTuCDR.ViewModels
             {
                 if (SetProperty(ref _processSelection, value) && value) ProcessAllDocument = false;
                 NotifyInfoProps();
+                RefreshDocumentInfo();
             }
         }
         public bool ProcessAllDocument
@@ -89,6 +90,7 @@ namespace QiTuCDR.ViewModels
             {
                 if (SetProperty(ref _processAllDocument, value) && value) ProcessSelection = false;
                 NotifyInfoProps();
+                RefreshDocumentInfo();
             }
         }
 
