@@ -34,7 +34,7 @@ namespace QiTuCDR.ViewModels
         private bool _processSelection;
         private bool _convertText = true;
         private bool _convertGraphics = true;
-        private bool _convertOutlines = true;
+        private bool _convertOutlines = false;
         private bool _isProcessing;
 
         private string _resultMessage;
@@ -65,13 +65,13 @@ namespace QiTuCDR.ViewModels
         public string ScopePrefix => ProcessAllDocument ? "文档" : ProcessSelection ? "选中" : "页面";
 
         public string TextCountInfo =>
-            $"{ScopePrefix} / 共 {TextCount} 个";
+            $"{TextCount} 个";
 
         public string GraphicsCountInfo =>
-            $"{ScopePrefix} / 共 {GraphicsCount} 个";
+            $"{GraphicsCount} 个";
 
         public string OutlineCountInfo =>
-            $"{ScopePrefix} / 共 {OutlineCount} 个";
+            $"{OutlineCount} 个";
 
         public bool ProcessSelection
         {

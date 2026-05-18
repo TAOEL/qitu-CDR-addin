@@ -474,7 +474,7 @@ namespace QiTuCDR.Views
             ScopeCombo.SelectedIndex = 1;
             vm.ConvertText = true;
             vm.ConvertGraphics = true;
-            vm.ConvertOutlines = true;
+            vm.ConvertOutlines = false;
             vm.HasResult = false;
             vm.RefreshDocumentInfo();
         }
