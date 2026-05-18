@@ -27,7 +27,16 @@ namespace QiTuCDR.Views
             var vm = new ViewModels.TextToCurvesViewModel();
             DataContext = vm;
 
+            vm.LoadConfigState();
+
+            // 还原 ScopeCombo 下拉框选中项（必须在 LoadConfigState 之后）
+            ScopeCombo.SelectedIndex = vm.GetScopeIndex();
+
             Loaded += (s, e) => vm.RefreshDocumentInfo();
+            Unloaded += (s, e) =>
+            {
+                vm.SaveConfigState(ScopeCombo.SelectedIndex);
+            };
         }
 
         /// <summary>

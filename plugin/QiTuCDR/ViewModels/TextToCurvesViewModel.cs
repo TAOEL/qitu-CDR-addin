@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Reflection;
 using System.Windows;
+using Newtonsoft.Json;
 using QiTuCDR.Utils;
 
 namespace QiTuCDR.ViewModels
@@ -104,7 +106,21 @@ namespace QiTuCDR.ViewModels
 
         public bool ConvertText { get => _convertText; set => SetProperty(ref _convertText, value); }
         public bool ConvertGraphics { get => _convertGraphics; set => SetProperty(ref _convertGraphics, value); }
-        public bool ConvertOutlines { get => _convertOutlines; set => SetProperty(ref _convertOutlines, value); }
+        public bool ConvertOutlines
+        {
+            get => _convertOutlines;
+            set => SetProperty(ref _convertOutlines, value);
+        }
+
+        public int ScopeIndex
+        {
+            get
+            {
+                if (ProcessSelection) return 0;
+                if (ProcessAllDocument) return 2;
+                return 1;
+            }
+        }
 
         public bool IsProcessing { get => _isProcessing; set { if (SetProperty(ref _isProcessing, value)) ExecuteCommand.RaiseCanExecuteChanged(); } }
         public string ResultMessage { get => _resultMessage; set => SetProperty(ref _resultMessage, value); }
@@ -279,6 +295,74 @@ namespace QiTuCDR.ViewModels
         }
 
         private void ClearDoc() { DocumentName = "（无活动文档）"; TextCount = GraphicsCount = OutlineCount = 0; }
+
+        // ═══════════════════ 参数持久化 ═══════════════════
+
+        private static readonly string ConfigDir =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QiTuCDR", "TextToCurves");
+        private static readonly string ConfigPath = Path.Combine(ConfigDir, "config.json");
+
+        public void LoadConfigState()
+        {
+            try
+            {
+                if (!File.Exists(ConfigPath)) return;
+                var json = File.ReadAllText(ConfigPath);
+                var cfg = JsonConvert.DeserializeObject<T2CConfig>(json);
+                if (cfg == null) return;
+
+                _convertText = cfg.ConvertText;
+                OnPropertyChanged(nameof(ConvertText));
+                _convertGraphics = cfg.ConvertGraphics;
+                OnPropertyChanged(nameof(ConvertGraphics));
+                _convertOutlines = cfg.ConvertOutlines;
+                OnPropertyChanged(nameof(ConvertOutlines));
+
+                switch (cfg.ScopeIndex)
+                {
+                    case 0: ProcessSelection = true; break;
+                    case 2: ProcessAllDocument = true; break;
+                    default: ProcessSelection = false; ProcessAllDocument = false; break;
+                }
+
+                Logger.Info($"[T2C] 配置已加载 scope={cfg.ScopeIndex} text={cfg.ConvertText} gfx={cfg.ConvertGraphics} outl={cfg.ConvertOutlines}");
+            }
+            catch (Exception ex) { Logger.Warn($"[T2C] 加载配置失败: {ex.Message}"); }
+        }
+
+        public int GetScopeIndex() => ScopeIndex;
+
+        public void SaveConfigState(int scopeIndex)
+        {
+            try
+            {
+                if (!PluginSettings.IsSaveConfig)
+                {
+                    try { if (File.Exists(ConfigPath)) File.Delete(ConfigPath); } catch { }
+                    return;
+                }
+                Directory.CreateDirectory(ConfigDir);
+                var cfg = new T2CConfig
+                {
+                    ScopeIndex = scopeIndex,
+                    ConvertText = _convertText,
+                    ConvertGraphics = _convertGraphics,
+                    ConvertOutlines = _convertOutlines,
+                };
+                var json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
+                File.WriteAllText(ConfigPath, json);
+                Logger.Info("[T2C] 配置已保存");
+            }
+            catch (Exception ex) { Logger.Warn($"[T2C] 保存配置失败: {ex.Message}"); }
+        }
+
+        private class T2CConfig
+        {
+            public int ScopeIndex { get; set; }
+            public bool ConvertText { get; set; } = true;
+            public bool ConvertGraphics { get; set; } = true;
+            public bool ConvertOutlines { get; set; }
+        }
 
         // ═══════════════════ OnExecute ═══════════════════
 

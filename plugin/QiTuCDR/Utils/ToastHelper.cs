@@ -51,10 +51,11 @@ namespace QiTuCDR.Utils
                 };
 
                 popup.Content = border;
-                popup.Show();
 
                 if (shake)
                     ApplyShake(popup);
+
+                popup.Show();
 
                 StartAutoClose(popup, durationMs);
             }
@@ -63,20 +64,33 @@ namespace QiTuCDR.Utils
 
         private static void ApplyShake(Window popup)
         {
-            popup.Loaded += (s, e) =>
+            var transform = new TranslateTransform();
+            popup.RenderTransform = transform;
+
+            // CDR wpfhost 无 Application，Loaded/ContentRendered 可能不可靠。
+            // 用一次性 DispatcherTimer（100ms 后触发）保证动画稳定执行。
+            var timer = new System.Windows.Threading.DispatcherTimer
             {
-                var transform = new TranslateTransform();
-                popup.RenderTransform = transform;
-                var anim = new DoubleAnimation
-                {
-                    From = 0,
-                    To = 6,
-                    Duration = TimeSpan.FromMilliseconds(45),
-                    AutoReverse = true,
-                    RepeatBehavior = new RepeatBehavior(3),
-                };
-                transform.BeginAnimation(TranslateTransform.XProperty, anim);
+                Interval = TimeSpan.FromMilliseconds(100),
             };
+            timer.Tick += (s, e) =>
+            {
+                timer.Stop();
+                try
+                {
+                    var anim = new DoubleAnimation
+                    {
+                        From = 0,
+                        To = 6,
+                        Duration = TimeSpan.FromMilliseconds(45),
+                        AutoReverse = true,
+                        RepeatBehavior = new RepeatBehavior(3),
+                    };
+                    transform.BeginAnimation(TranslateTransform.XProperty, anim);
+                }
+                catch { }
+            };
+            timer.Start();
         }
 
         private static void StartAutoClose(Window popup, int durationMs)
