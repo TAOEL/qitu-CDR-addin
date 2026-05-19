@@ -448,6 +448,20 @@ namespace QiTuCDR.ViewModels
                 int type = 0; try { type = (int)((dynamic)obj).Type; } catch { }
                 string typeLabel = ShapeTypeLabel(type);
 
+                // 锁定对象处理：整个文档/当前页面范围时，解锁后执行转曲
+                if (!ProcessSelection)
+                {
+                    try
+                    {
+                        if ((bool)((dynamic)obj).Locked)
+                        {
+                            ((dynamic)obj).Locked = false;
+                            Logger.Info($"  [解锁] type={type}({typeLabel})");
+                        }
+                    }
+                    catch { }
+                }
+
                 // 递归群组
                 var child = ComGet(obj, "Shapes");
                 if (child != null && GetSafeCount(child) > 0)
